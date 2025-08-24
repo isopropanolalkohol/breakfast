@@ -16,6 +16,11 @@ struct BF_RUN_ENVIR* BF_start_env(const char *filename)
         free(env);
         return NULL;
     }
+    env->head_cell = malloc(sizeof(struct BF_CELL));
+    env->head_cell->next = NULL;
+    env->head_cell->prev = NULL;
+    env->head_cell->val = 0;
+    env->exec_pointer = env->head_cell;
     return env;
 }
 
@@ -60,10 +65,11 @@ void BF_increment_pointer(struct BF_RUN_ENVIR *env)
         env->exec_pointer = env->exec_pointer->next;
         return;
     }
+
     env->exec_pointer->next = malloc(sizeof(struct BF_RUN_ENVIR));
-    env->exec_pointer->val = 0;
     env->exec_pointer->next->prev = env->exec_pointer;
     env->exec_pointer = env->exec_pointer->next;
+    env->exec_pointer->val = 0;
 }
 void BF_decrement_pointer(struct BF_RUN_ENVIR *env)
 {
@@ -96,11 +102,11 @@ void BF_stdin_curr_cell(struct BF_RUN_ENVIR *env)
 }
 void BF_start_loop(struct BF_RUN_ENVIR *env, struct BF_STACKFRAME *frame)
 {
-    rewind(env->file_pointer);
     struct BF_STACKFRAME *frame2 = malloc(sizeof(struct BF_STACKFRAME));
     frame2->prev = frame;
     frame->next = frame2;
     fgetpos(env->file_pointer, &frame2->frame_position);
+    frame2->frame_position.__pos--;
     fgetc(env->file_pointer);
     char current_char = fgetc(env->file_pointer);
     while (1)
@@ -150,6 +156,7 @@ void BF_start_loop(struct BF_RUN_ENVIR *env, struct BF_STACKFRAME *frame)
             default:
                 break;
         }
+        current_char = fgetc(env->file_pointer);
     }
 }
 // the loop handling will be a headache
@@ -186,7 +193,18 @@ void BF_run_program(struct BF_RUN_ENVIR *env)
                 BF_stdin_curr_cell(env);
                 break;
             case '[':
-                BF_start_loop(env, frame);
+                if (env->exec_pointer->val == 0)
+                {
+                    // forward to end of the loop
+                    int brace_count = 1;
+                    while (brace_count != 0)
+                    {
+                        char new_char = fgetc(env->file_pointer);
+                        if (new_char == '[') brace_count++;
+                        else if (new_char == ']') brace_count--;
+                    }
+                }
+                else BF_start_loop(env, frame);
                 break;
             case ']':
                 fprintf(stderr, "Encountered unwell formed parentheses");
