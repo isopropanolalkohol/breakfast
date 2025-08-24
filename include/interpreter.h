@@ -28,6 +28,15 @@ void BF_run_program(struct BF_RUN_ENVIR *env);
 
 void BF_parse_char(struct BF_RUN_ENVIR *env, char c);
 
+void BF_increment_pointer(struct BF_RUN_ENVIR *env); // >
+void BF_decrement_pointer(struct BF_RUN_ENVIR *env); // <
+void BF_increment_cell(struct BF_RUN_ENVIR *env); // +
+void BF_decrement_cell(struct BF_RUN_ENVIR *env); // -
+void BF_stdout_curr_cell(struct BF_RUN_ENVIR *env); // .
+void BF_stdin_curr_cell(struct BF_RUN_ENVIR *env); // ,
+// loop handlign will be in the funtion used for running
+
+
 
 
 #endif //INTERPRETER_H

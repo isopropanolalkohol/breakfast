@@ -41,3 +41,13 @@ void BF_end_env(struct BF_RUN_ENVIR *env)
     }
     free(env);
 }
+// here are our functions used for brainfuck syntax
+void increment_pointer(struct BF_RUN_ENVIR *env)
+
+
+
+// the loop handling will be a headache
+void BF_run_program(struct BF_RUN_ENVIR *env)
+{
+
+}
