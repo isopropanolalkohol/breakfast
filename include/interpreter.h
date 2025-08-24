@@ -21,11 +21,13 @@ typedef struct BF_RUN_ENVIR
 } Environment;
 
 struct BF_RUN_ENVIR* BF_start_env(const char *filename);
+// to free all the shit
 void BF_end_env(struct BF_RUN_ENVIR *env);
 
 void BF_run_program(struct BF_RUN_ENVIR *env);
 
 void BF_parse_char(struct BF_RUN_ENVIR *env, char c);
+
 
 
 #endif //INTERPRETER_H
